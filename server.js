@@ -14,14 +14,23 @@ const wishlistRoutes = require("./routes/wishlistRoute");
 
 connectDB();
 
-// const corsOptions = {
-//   origin: "https://product-management-frontend-ruby.vercel.app", // Replace with your actual Vercel frontend URL
-//   credentials: true,
-// };
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = ["https://product-management-frontend-ruby.vercel.app"];
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
 
-// app.use(cors(corsOptions));
-app.use(cors());
+
+app.use(cors(corsOptions));
+// app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
@@ -29,7 +38,6 @@ app.use("/api/sub-category", subCategoryRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 
-app.use("/uploads", express.static("uploads"));
 
 const PORT = process.env.PORT || 5000;
 
