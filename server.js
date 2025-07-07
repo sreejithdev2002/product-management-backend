@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
+
 
 const app = express();
 const connectDB = require("./config/db");
@@ -28,6 +30,14 @@ const corsOptions = {
 
 
 app.use(cors(corsOptions));
+// app.use(cors())
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // Max 100 requests per IP per minute
+});
+
+app.use(limiter);
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
